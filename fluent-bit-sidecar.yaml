@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fluent-bit-producer
+spec:
+  containers:
+    - name: producer
+      image: busybox
+      args: ["/bin/sh", "-c", "while true; do echo $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | sed 1q) >> /var/log/1.log; sleep 1; done"]
+      volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+    - name: fluent-bit-sidecar
+      image: fluent/fluent-bit
+      volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: fluent-bit-config
+          mountPath: /fluent-bit/etc/
+  volumes:
+    - name: varlog
+      emptyDir: {}
+    - name: fluent-bit-config
+      configMap:
+        name: fluent-bit-configmap

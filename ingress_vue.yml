@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vue-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: ec2-3-37-174-60.ap-northeast-2.compute.amazonaws.com
+    http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: svc-bmwfrontend
+            port:
+             number: 80
+        pathType: Prefix
+
